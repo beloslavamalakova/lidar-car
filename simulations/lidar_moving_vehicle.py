@@ -3,6 +3,7 @@ import math
 import os
 import random
 import csv
+from datetime import datetime
 import matplotlib.pyplot as plt
 from matplotlib.patches import Rectangle, Circle
 
@@ -285,8 +286,11 @@ def run_moving_simulation():
         return
 
     os.makedirs("data", exist_ok=True)
-    bin_path = "data/lidar_moving_sim.bin"
-    csv_path = "data/lidar_moving_path.csv"
+
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    bin_path = f"data/lidar_moving_sim_{timestamp}.bin"
+    csv_path = f"data/lidar_moving_path_{timestamp}.csv"
+    png_path = f"data/lidar_moving_result_{timestamp}.png"
 
     x, y = lidar_pos
     gx, gy = goal_pos
@@ -375,12 +379,13 @@ def run_moving_simulation():
     print(f"Saved LiDAR data to {bin_path}")
     print(f"Saved path log to {csv_path}")
 
-    visualize_final_result(path_points, world_scan_points, reached, crashed, stuck)
+    visualize_final_result(path_points, world_scan_points, reached, crashed, stuck, png_path)
+
 
 # =========================
 # FINAL VISUALIZATION
 # =========================
-def visualize_final_result(path_points, world_scan_points, reached, crashed, stuck):
+def visualize_final_result(path_points, world_scan_points, reached, crashed, stuck, png_path):
     plt.figure(figsize=(9, 9))
     ax2 = plt.gca()
 
@@ -427,6 +432,10 @@ def visualize_final_result(path_points, world_scan_points, reached, crashed, stu
     ax2.set_aspect('equal')
     ax2.grid(True, alpha=0.3)
     ax2.legend(loc="upper right")
+
+    plt.savefig(png_path, dpi=300, bbox_inches="tight")
+    print(f"Saved final image to {png_path}")
+
     plt.show()
 
 
